@@ -1,9 +1,22 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
+<section class="col-8">
     <form action="{% url 'minha_consulta' %}" method="post">
         {% csrf_token %}
-        {{ form }}
+        {% for field in form.visible_fields %}
+        <div class="mb-3">
+            <label class="{% for class in field.label_classes %}{{ class }} {% endfor %}"
+               for="{{ field.auto_id }}">{{ field.label }}</label>
+            {{ field }}
+        </div>
+        {% for errors in field.errors %}
+        <div class="alert alert-danger" role="alert">
+            {{ errors }}
+        </div>
+        {% endfor %}
+        {% endfor %}
         <input type="submit" value="Enviar" class="btn btn-success">
     </form>
+</section>
 {% endblock %}
