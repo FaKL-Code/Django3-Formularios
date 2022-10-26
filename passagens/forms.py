@@ -5,4 +5,3 @@ class PassagensForms(forms.Form):
     destino = forms.CharField(label='Destino', max_length=100)
     data_ida = forms.DateField(label='Data Ida')
     data_volta = forms.DateField(label='Data Volta')
-    quantidade_passageiros = forms.IntegerField(label='Quantidade de Passageiros')
