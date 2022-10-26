@@ -1,25 +1,21 @@
 from django import forms
 from datetime import datetime
 from passagens.validations import *
+from passagens.models import Passagem, ClasseViagem, Pessoa
 
-CLASSES = [('Econômica', 'Econômica'), ('Executiva', 'Executiva'), ('Primeira Classe', 'Primeira Classe')]
+class PassagensForms(forms.ModelForm):
+    data_pesquisa = forms.DateField(label='Data da pesquisa', disabled=True, initial=datetime.today)
 
-class PassagensForms(forms.Form):
-    origem = forms.CharField(label='Origem', max_length=100 , widget=forms.TextInput(attrs={'class': 'form-control'}))
-    origem.label_classes = 'form-label'
-    destino = forms.CharField(label='Destino', max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    destino.label_classes = 'form-label'
-    data_ida = forms.DateField(label='Data Ida', widget=forms.widgets.DateInput(attrs={	'type': 'date', 'class': 'form-control'}))
-    data_ida.label_classes = 'form-label'
-    data_volta = forms.DateField(label='Data Volta', widget=forms.widgets.DateInput(attrs={	'type': 'date', 'class': 'form-control'}))
-    data_volta.label_classes = 'form-label'
-    data_pesquisa = forms.DateField(label='Data da pesquisa', widget=forms.widgets.DateInput(attrs={	'type': 'date', 'class': 'form-control'}), disabled=True, initial=datetime.today)
-    data_pesquisa.label_classes = 'form-label'
-    tipo_classe = forms.CharField(label='Classe', widget=forms.Select(choices=CLASSES, attrs={'class': 'form-select'}))
-    tipo_classe.label_classes = 'form-label'
-    email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'class': 'form-control'}))
-    email.label_classes = 'form-label'
-    
+    class Meta:
+        model = Passagem
+        fields = '__all__'
+        labels = {'data_ida':'Data de ida', 'data_volta':'Data de volta', 'informacoes':'Informações', 'classe_viagem':'Classe do vôo'}
+        widgets = {
+            'data_ida':forms.DateInput(attrs={'type':'date'}),
+            'data_volta':forms.DateInput(attrs={'type':'date'}),
+        }
+        data_pesquisa = forms.DateField(label='Data da pesquisa', disabled=True, initial=datetime.today)
+        
     def clean(self):
         origem = self.cleaned_data.get('origem')
         destino = self.cleaned_data.get('destino')
@@ -37,3 +33,8 @@ class PassagensForms(forms.Form):
                 mensagem_erro = lista_de_erros[erro]
                 self.add_error(erro, mensagem_erro)
         return self.cleaned_data
+
+class PessoaForms(forms.ModelForm):
+    class Meta:
+        model = Pessoa
+        exclude = ['nome']
